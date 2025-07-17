@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">GuardaEstados</string>
+    <string name="tab_estados">Estados</string>
+    <string name="tab_guardados">Guardados</string>
+    <string name="tab_mensaje">Mensaje</string>
+    <string name="tabs_title">Selecciona una opción</string>
+    <string name="settings">Configuración</string>
+    <string name="no_status_found">No se encontraron estados</string>
+    <string name="no_saved_files">No hay archivos guardados</string>
+    <string name="delete_all_saved">Eliminar todos los guardados</string>
+    <string name="delete_all_confirm_title">Confirmar eliminación</string>
+    <string name="delete_all_confirm_text">¿Estás seguro de que quieres eliminar todos los archivos guardados? Esta acción no se puede deshacer.</string>
+    <string name="delete">Eliminar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="delete_success">Archivos eliminados correctamente</string>
+    <string name="error_tab">Error en la pestaña</string>
+    <string name="refresh">Actualizar</string>
+    
+    <!-- Mensaje Screen -->
+    <string name="send_message_title">Enviar mensaje de WhatsApp</string>
+    <string name="country_prefix">Prefijo</string>
+    <string name="local_number">Número local</string>
+    <string name="message">Mensaje</string>
+    <string name="number_starts_zero">El número no debe comenzar con 0</string>
+    <string name="send_whatsapp">Enviar WhatsApp</string>
+    <string name="whatsapp_error">Error al enviar mensaje</string>
+    
+    <!-- Búsqueda y filtros -->
+    <string name="search_files">Buscar archivos...</string>
+    <string name="filter_all">Todos</string>
+    <string name="filter_images">Imágenes</string>
+    <string name="filter_videos">Videos</string>
+    <string name="no_results_found">No se encontraron archivos</string>
+    <string name="try_other_search">Intenta con otros términos de búsqueda</string>
+    <string name="selected_count">Seleccionados</string>
+    <string name="clear_selection">Limpiar</string>
+    
+    <!-- Acciones en lote -->
+    <string name="batch_actions">Acciones en lote</string>
+    <string name="share_files">Compartir archivos</string>
+    <string name="download_files">Descargar archivos</string>
+    <string name="delete_files">Eliminar archivos</string>
+    <string name="files_downloaded">Archivos descargados</string>
+    <string name="files_deleted">Archivos eliminados</string>
+    <string name="files_shared">Archivos compartidos</string>
+    <string name="download_folder">Carpeta de descarga</string>
+    <string name="select_folder">Seleccionar carpeta</string>
+    
+    <!-- Validación de números -->
+    <string name="invalid_phone_number">Número de teléfono inválido</string>
+    <string name="phone_length_error">Longitud esperada</string>
+    <string name="phone_digits">dígitos</string>
+    <string name="invalid_number">Número de teléfono inválido</string>
+    <string name="no_whatsapp_found">No se encontró WhatsApp ni navegador. Enlace copiado al portapapeles.</string>
+    <string name="no_whatsapp_instances_found">No se detectaron cuentas de WhatsApp</string>
+    <string name="number_length_expected">Longitud esperada: %1$d-%2$d dígitos</string>
+    
+    <!-- Consejos -->
+    <string name="tips_title">💡 Consejos:</string>
+    <string name="tips_country_code">• Asegúrate de incluir el código de país</string>
+    <string name="tips_no_special_chars">• No incluyas espacios ni caracteres especiales</string>
+    <string name="tips_auto_open">• El mensaje se abrirá en WhatsApp automáticamente</string>
+    <string name="back">Atrás</string>
+    <string name="color_palette">Paleta de colores:</string>
+    <string name="green">Verde</string>
+    <string name="blue">Azul/Lila/Beige</string>
+    <string name="preview_bar">Barra de acciones en vista previa:</string>
+    <string name="translucent">Translúcida</string>
+    <string name="solid">Sólida</string>
+    <string name="select_whatsapp_account">Seleccionar cuenta de WhatsApp:</string>
+    <string name="select_account">Seleccionar cuenta</string>
+    <string name="language">Idioma de la app:</string>
+    <string name="lang_es">Español</string>
+    <string name="lang_en">English</string>
+    <string name="lang_pt_br">Português (Brasil)</string>
+    <string name="lang_hi">हिन्दी</string>
+    <string name="lang_fr">Français</string>
+    <string name="lang_de">Deutsch</string>
+    <string name="lang_it">Italiano</string>
+    <string name="lang_tr">Türkçe</string>
+    <string name="lang_id">Bahasa Indonesia</string>
+    <string name="lang_ru">Русский</string>
+    <string name="lang_sw">Kiswahili</string>
+    <string name="lang_bn">বাংলা</string>
+    <string name="lang_tl">Tagalog</string>
+    <string name="whatsapp_dual">WhatsApp Dual</string>
+    <string name="open_whatsapp_dual">Abrir WhatsApp Dual</string>
+    <string name="theme_mode">Modo de tema</string>
+    <string name="theme_mode_system">Por sistema</string>
+    <string name="theme_mode_light">Claro</string>
+    <string name="theme_mode_dark">Oscuro</string>
+    <string name="rewarded_ad_title">Ver video para guardar</string>
+    <string name="rewarded_ad_message">Para guardar este estado, debes ver el video completo. ¿Deseas continuar?</string>
+    <string name="rewarded_ad_batch_title">Ver video para continuar</string>
+    <string name="rewarded_ad_batch_message">Para realizar esta acción, debes ver un video corto. ¿Deseas continuar?</string>
+    <string name="accept">Aceptar</string>
+    <string name="lang_auto">Automático (por sistema)</string>
+    <string name="locked">Bloqueado</string>
+    <string name="unlocked">Desbloqueado</string>
+    <string name="privacy_policy">Política de Privacidad</string>
+    <string name="privacy_policy_title">Política de Privacidad</string>
+    <string name="last_updated">Última actualización</string>
+    <string name="accept_privacy_policy">Aceptar</string>
+    
+    <!-- Secciones de la política de privacidad -->
+    <string name="privacy_section_1_title">1. Información que recopilamos</string>
+    <string name="privacy_section_1_content">GuardaEstados no recopila, almacena ni transmite información personal de los usuarios. La aplicación funciona completamente de forma local en su dispositivo. Solo accedemos a los archivos de estados de WhatsApp que usted autoriza explícitamente a través de los permisos del sistema.</string>
+    
+    <string name="privacy_section_2_title">2. Cómo usamos la información</string>
+    <string name="privacy_section_2_content">La información de los estados de WhatsApp se utiliza únicamente para mostrar, guardar y compartir los archivos que usted selecciona. No procesamos, analizamos ni transmitimos estos archivos a servidores externos. Todo el procesamiento se realiza localmente en su dispositivo.</string>
+    
+    <string name="privacy_section_3_title">3. Permisos de la aplicación</string>
+    <string name="privacy_section_3_content">GuardaEstados solicita acceso al almacenamiento de su dispositivo únicamente para:\n• Leer los archivos de estados de WhatsApp\n• Guardar archivos en la carpeta de descargas que usted seleccione\n• Compartir archivos a través de otras aplicaciones\n\nEstos permisos son necesarios para el funcionamiento básico de la aplicación y no se utilizan para ningún otro propósito.</string>
+    
+    <string name="privacy_section_4_title">4. Anuncios</string>
+    <string name="privacy_section_4_content">La aplicación puede mostrar anuncios de Google AdMob. Estos anuncios pueden recopilar información básica de uso para personalizar la experiencia publicitaria. Usted puede controlar el consentimiento de anuncios desde la configuración de la aplicación. Los anuncios no tienen acceso a sus archivos personales ni información de WhatsApp.</string>
+    
+    <string name="privacy_section_5_title">5. Sus derechos</string>
+    <string name="privacy_section_5_content">Como no recopilamos información personal, no tenemos datos que eliminar o modificar. Sin embargo, usted tiene control total sobre:\n• Los permisos de la aplicación\n• El consentimiento para anuncios\n• Los archivos que guarda o comparte\n• La carpeta de descargas\n\nPuede revocar permisos en cualquier momento desde la configuración de su dispositivo.</string>
+    
+    <string name="privacy_section_6_title">6. Cambios a esta política</string>
+    <string name="privacy_section_6_content">Nos reservamos el derecho de actualizar esta política de privacidad. Cualquier cambio será notificado a través de actualizaciones de la aplicación. Le recomendamos revisar esta política periódicamente para mantenerse informado sobre cómo protegemos su privacidad.</string>
+    
+    <string name="privacy_section_7_title">7. Contacto</string>
+    <string name="privacy_section_7_content">Si tiene preguntas sobre esta política de privacidad o el funcionamiento de la aplicación, puede contactarnos a través de:\n\nEmail: sjocol.dev@gmail.com\n\nResponderemos a su consulta en el menor tiempo posible.</string>
+    
+    <!-- Términos de servicio -->
+    <string name="terms_of_service">Términos de Servicio</string>
+    <string name="terms_of_service_title">Términos de Servicio</string>
+    <string name="accept_terms">Aceptar</string>
+    <string name="legal_documents">Documentos Legales</string>
+    
+    <!-- Secciones de términos de servicio -->
+    <string name="terms_section_1_title">1. Aceptación de términos</string>
+    <string name="terms_section_1_content">Al descargar, instalar o usar GuardaEstados, usted acepta estar sujeto a estos términos de servicio. Si no está de acuerdo con alguna parte de estos términos, no debe usar la aplicación.</string>
+    
+    <string name="terms_section_2_title">2. Descripción del servicio</string>
+    <string name="terms_section_2_content">GuardaEstados es una aplicación que permite visualizar, guardar y compartir estados de WhatsApp. La aplicación funciona de forma local en su dispositivo y no requiere conexión a internet para su funcionamiento básico.</string>
+    
+    <string name="terms_section_3_title">3. Uso aceptable</string>
+    <string name="terms_section_3_content">Usted se compromete a usar la aplicación únicamente para fines legales y éticos. No debe usar la aplicación para:\n• Violar derechos de autor o propiedad intelectual\n• Compartir contenido ilegal o inapropiado\n• Dañar o interferir con el funcionamiento de otros dispositivos\n• Usar la aplicación de manera que pueda dañar a otros usuarios</string>
+    
+    <string name="terms_section_4_title">4. Propiedad intelectual</string>
+    <string name="terms_section_4_content">GuardaEstados y su contenido original son propiedad de sus desarrolladores. Los estados de WhatsApp que usted visualiza, guarda o comparte siguen siendo propiedad de sus respectivos creadores. La aplicación no reclama propiedad sobre el contenido de terceros.</string>
+    
+    <string name="terms_section_5_title">5. Limitación de responsabilidad</string>
+    <string name="terms_section_5_content">La aplicación se proporciona \"tal como está\" sin garantías de ningún tipo. No somos responsables por:\n• Pérdida de datos o archivos\n• Daños al dispositivo\n• Uso indebido del contenido compartido\n• Problemas de compatibilidad con WhatsApp</string>
+    
+    <string name="terms_section_6_title">6. Terminación</string>
+    <string name="terms_section_6_content">Podemos terminar o suspender su acceso a la aplicación en cualquier momento, sin previo aviso, por cualquier motivo, incluyendo el incumplimiento de estos términos de servicio.</string>
+    
+    <string name="terms_section_7_title">7. Ley aplicable</string>
+    <string name="terms_section_7_content">Estos términos se rigen por las leyes de Guatemala. Cualquier disputa será resuelta en los tribunales competentes de Guatemala.</string>
+    <string name="purple">Púrpura</string>
+    <string name="orange">Naranja</string>
+    <string name="gray">Gris</string>
+</resources>

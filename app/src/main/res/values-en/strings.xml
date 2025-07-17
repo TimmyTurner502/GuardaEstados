@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">StatusSaver</string>
+    <string name="tab_estados">Statuses</string>
+    <string name="tab_guardados">Saved</string>
+    <string name="tab_mensaje">Message</string>
+    <string name="tabs_title">Select an option</string>
+    <string name="settings">Settings</string>
+    <string name="no_status_found">No statuses found</string>
+    <string name="no_saved_files">No saved files</string>
+    <string name="delete_all_saved">Delete all saved</string>
+    <string name="delete_all_confirm_title">Confirm deletion</string>
+    <string name="delete_all_confirm_text">Are you sure you want to delete all saved files? This action cannot be undone.</string>
+    <string name="delete">Delete</string>
+    <string name="cancel">Cancel</string>
+    <string name="delete_success">Files deleted successfully</string>
+    <string name="error_tab">Tab error</string>
+    <string name="refresh">Refresh</string>
+    <string name="send_message_title">Send WhatsApp message</string>
+    <string name="country_prefix">Prefix</string>
+    <string name="local_number">Local number</string>
+    <string name="message">Message</string>
+    <string name="number_starts_zero">Number must not start with 0</string>
+    <string name="send_whatsapp">Send WhatsApp</string>
+    <string name="whatsapp_error">Error sending message</string>
+    <string name="search_files">Search files...</string>
+    <string name="filter_all">All</string>
+    <string name="filter_images">Images</string>
+    <string name="filter_videos">Videos</string>
+    <string name="no_results_found">No files found</string>
+    <string name="try_other_search">Try other search terms</string>
+    <string name="selected_count">Selected</string>
+    <string name="clear_selection">Clear</string>
+    <string name="batch_actions">Batch actions</string>
+    <string name="share_files">Share files</string>
+    <string name="download_files">Download files</string>
+    <string name="delete_files">Delete files</string>
+    <string name="files_downloaded">Files downloaded</string>
+    <string name="files_deleted">Files deleted</string>
+    <string name="files_shared">Files shared</string>
+    <string name="invalid_phone_number">Invalid phone number</string>
+    <string name="phone_length_error">Expected length</string>
+    <string name="phone_digits">digits</string>
+    <string name="tips_title">💡 Tips:</string>
+    <string name="tips_country_code">• Make sure to include the country code</string>
+    <string name="tips_no_special_chars">• Do not include spaces or special characters</string>
+    <string name="tips_auto_open">• The message will open in WhatsApp automatically</string>
+    <string name="back">Back</string>
+    <string name="color_palette">Color palette:</string>
+    <string name="green">Green</string>
+    <string name="blue">Blue/Lilac/Beige</string>
+    <string name="preview_bar">Preview action bar:</string>
+    <string name="translucent">Translucent</string>
+    <string name="solid">Solid</string>
+    <string name="select_whatsapp_account">Select WhatsApp account:</string>
+    <string name="select_account">Select account</string>
+    <string name="language">App language:</string>
+    <string name="lang_es">Spanish</string>
+    <string name="lang_en">English</string>
+    <string name="lang_pt_br">Portuguese (Brazil)</string>
+    <string name="lang_hi">Hindi</string>
+    <string name="invalid_number">Invalid phone number</string>
+    <string name="no_whatsapp_found">No WhatsApp or browser found. Link copied to clipboard.</string>
+    <string name="number_length_expected">Expected length: %1$d-%2$d digits</string>
+    <string name="theme_mode">Theme mode</string>
+    <string name="theme_mode_system">System</string>
+    <string name="theme_mode_light">Light</string>
+    <string name="theme_mode_dark">Dark</string>
+    <string name="rewarded_ad_title">Watch video to save</string>
+    <string name="rewarded_ad_message">To save this status, you must watch the full video. Continue?</string>
+    <string name="accept">Accept</string>
+    <string name="download_folder">Download folder</string>
+    <string name="select_folder">Select folder</string>
+    <string name="whatsapp_dual">WhatsApp Dual</string>
+    <string name="open_whatsapp_dual">Open WhatsApp Dual</string>
+    <string name="lang_fr">French</string>
+    <string name="lang_de">German</string>
+    <string name="lang_it">Italian</string>
+    <string name="lang_tr">Turkish</string>
+    <string name="lang_id">Indonesian</string>
+    <string name="lang_ru">Russian</string>
+    <string name="lang_sw">Swahili</string>
+    <string name="lang_bn">Bengali</string>
+    <string name="lang_tl">Tagalog</string>
+    <string name="locked">Locked</string>
+    <string name="unlocked">Unlocked</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="privacy_policy_title">Privacy Policy</string>
+    <string name="last_updated">Last updated</string>
+    <string name="accept_privacy_policy">Accept</string>
+    
+    <!-- Privacy policy sections -->
+    <string name="privacy_section_1_title">1. Information we collect</string>
+    <string name="privacy_section_1_content">GuardaEstados does not collect, store, or transmit any personal information from users. The application works completely locally on your device. We only access WhatsApp status files that you explicitly authorize through system permissions.</string>
+    
+    <string name="privacy_section_2_title">2. How we use information</string>
+    <string name="privacy_section_2_content">WhatsApp status information is used solely to display, save, and share files that you select. We do not process, analyze, or transmit these files to external servers. All processing is done locally on your device.</string>
+    
+    <string name="privacy_section_3_title">3. App permissions</string>
+    <string name="privacy_section_3_content">GuardaEstados requests access to your device storage only for:\n• Reading WhatsApp status files\n• Saving files to the download folder you select\n• Sharing files through other applications\n\nThese permissions are necessary for the basic functioning of the app and are not used for any other purpose.</string>
+    
+    <string name="privacy_section_4_title">4. Advertising</string>
+    <string name="privacy_section_4_content">The app may display Google AdMob ads. These ads may collect basic usage information to personalize the advertising experience. You can control ad consent from the app settings. Ads do not have access to your personal files or WhatsApp information.</string>
+    
+    <string name="privacy_section_5_title">5. Your rights</string>
+    <string name="privacy_section_5_content">Since we do not collect personal information, we have no data to delete or modify. However, you have complete control over:\n• App permissions\n• Ad consent\n• Files you save or share\n• Download folder\n\nYou can revoke permissions at any time from your device settings.</string>
+    
+    <string name="privacy_section_6_title">6. Changes to this policy</string>
+    <string name="privacy_section_6_content">We reserve the right to update this privacy policy. Any changes will be notified through app updates. We recommend reviewing this policy periodically to stay informed about how we protect your privacy.</string>
+    
+    <string name="privacy_section_7_title">7. Contact</string>
+    <string name="privacy_section_7_content">If you have questions about this privacy policy or the app\'s operation, you can contact us through:\n\nEmail: sjocol.dev@gmail.com\n\nWe will respond to your inquiry as soon as possible.</string>
+    
+    <!-- Terms of service -->
+    <string name="terms_of_service">Terms of Service</string>
+    <string name="terms_of_service_title">Terms of Service</string>
+    <string name="accept_terms">Accept</string>
+    <string name="legal_documents">Legal Documents</string>
+    
+    <!-- Terms of service sections -->
+    <string name="terms_section_1_title">1. Acceptance of terms</string>
+    <string name="terms_section_1_content">By downloading, installing, or using GuardaEstados, you agree to be bound by these terms of service. If you do not agree to any part of these terms, you should not use the application.</string>
+    
+    <string name="terms_section_2_title">2. Service description</string>
+    <string name="terms_section_2_content">GuardaEstados is an application that allows you to view, save, and share WhatsApp statuses. The app works locally on your device and does not require an internet connection for basic operation.</string>
+    
+    <string name="terms_section_3_title">3. Acceptable use</string>
+    <string name="terms_section_3_content">You agree to use the app only for legal and ethical purposes. You must not use the app to:\n• Violate copyright or intellectual property rights\n• Share illegal or inappropriate content\n• Damage or interfere with the operation of other devices\n• Use the app in a way that may harm other users</string>
+    
+    <string name="terms_section_4_title">4. Intellectual property</string>
+    <string name="terms_section_4_content">GuardaEstados and its original content are the property of its developers. WhatsApp statuses that you view, save, or share remain the property of their respective creators. The app does not claim ownership of third-party content.</string>
+    
+    <string name="terms_section_5_title">5. Limitation of liability</string>
+    <string name="terms_section_5_content">The app is provided \"as is\" without warranties of any kind. We are not responsible for:\n• Loss of data or files\n• Device damage\n• Misuse of shared content\n• Compatibility issues with WhatsApp</string>
+    
+    <string name="terms_section_6_title">6. Termination</string>
+    <string name="terms_section_6_content">We may terminate or suspend your access to the app at any time, without prior notice, for any reason, including violation of these terms of service.</string>
+    
+    <string name="terms_section_7_title">7. Governing law</string>
+    <string name="terms_section_7_content">These terms are governed by the laws of Guatemala. Any dispute will be resolved in the competent courts of Guatemala.</string>
+</resources> 

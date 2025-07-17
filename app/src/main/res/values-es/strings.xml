@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="theme_mode">Modo de tema</string>
+    <string name="theme_mode_system">Por sistema</string>
+    <string name="theme_mode_light">Claro</string>
+    <string name="theme_mode_dark">Oscuro</string>
+    <string name="rewarded_ad_title">Ver video para guardar</string>
+    <string name="rewarded_ad_message">Para guardar este estado, debes ver el video completo. ¿Deseas continuar?</string>
+    <string name="accept">Aceptar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="privacy_policy">Política de Privacidad</string>
+    <string name="privacy_policy_title">Política de Privacidad</string>
+    <string name="last_updated">Última actualización</string>
+    <string name="accept_privacy_policy">Aceptar</string>
+
+    <!-- Secciones de la política de privacidad -->
+    <string name="privacy_section_1_title">1. Información que recopilamos</string>
+    <string name="privacy_section_1_content">GuardaEstados no recopila, almacena ni transmite información personal de los usuarios. La aplicación funciona completamente de forma local en su dispositivo. Solo accedemos a los archivos de estados de WhatsApp que usted autoriza explícitamente a través de los permisos del sistema.</string>
+
+    <string name="privacy_section_2_title">2. Cómo usamos la información</string>
+    <string name="privacy_section_2_content">La información de los estados de WhatsApp se utiliza únicamente para mostrar, guardar y compartir los archivos que usted selecciona. No procesamos, analizamos ni transmitimos estos archivos a servidores externos. Todo el procesamiento se realiza localmente en su dispositivo.</string>
+
+    <string name="privacy_section_3_title">3. Permisos de la aplicación</string>
+    <string name="privacy_section_3_content">GuardaEstados solicita acceso al almacenamiento de su dispositivo únicamente para:\n• Leer los archivos de estados de WhatsApp\n• Guardar archivos en la carpeta de descargas que usted seleccione\n• Compartir archivos a través de otras aplicaciones\n\nEstos permisos son necesarios para el funcionamiento básico de la aplicación y no se utilizan para ningún otro propósito.</string>
+
+    <string name="privacy_section_4_title">4. Anuncios</string>
+    <string name="privacy_section_4_content">La aplicación puede mostrar anuncios de Google AdMob. Estos anuncios pueden recopilar información básica de uso para personalizar la experiencia publicitaria. Usted puede controlar el consentimiento de anuncios desde la configuración de la aplicación. Los anuncios no tienen acceso a sus archivos personales ni información de WhatsApp.</string>
+
+    <string name="privacy_section_5_title">5. Sus derechos</string>
+    <string name="privacy_section_5_content">Como no recopilamos información personal, no tenemos datos que eliminar o modificar. Sin embargo, usted tiene control total sobre:\n• Los permisos de la aplicación\n• El consentimiento para anuncios\n• Los archivos que guarda o comparte\n• La carpeta de descargas\n\nPuede revocar permisos en cualquier momento desde la configuración de su dispositivo.</string>
+
+    <string name="privacy_section_6_title">6. Cambios a esta política</string>
+    <string name="privacy_section_6_content">Nos reservamos el derecho de actualizar esta política de privacidad. Cualquier cambio será notificado a través de actualizaciones de la aplicación. Le recomendamos revisar esta política periódicamente para mantenerse informado sobre cómo protegemos su privacidad.</string>
+
+    <string name="privacy_section_7_title">7. Contacto</string>
+    <string name="privacy_section_7_content">Si tiene preguntas sobre esta política de privacidad o el funcionamiento de la aplicación, puede contactarnos a través de:\n\nEmail: sjocol.dev@gmail.com\n\nResponderemos a su consulta en el menor tiempo posible.</string>
+
+<!-- Términos de servicio -->
+<string name="terms_of_service">Términos de Servicio</string>
+<string name="terms_of_service_title">Términos de Servicio</string>
+<string name="accept_terms">Aceptar</string>
+<string name="legal_documents">Documentos Legales</string>
+
+<!-- Secciones de términos de servicio -->
+<string name="terms_section_1_title">1. Aceptación de términos</string>
+<string name="terms_section_1_content">Al descargar, instalar o usar GuardaEstados, usted acepta estar sujeto a estos términos de servicio. Si no está de acuerdo con alguna parte de estos términos, no debe usar la aplicación.</string>
+
+<string name="terms_section_2_title">2. Descripción del servicio</string>
+<string name="terms_section_2_content">GuardaEstados es una aplicación que permite visualizar, guardar y compartir estados de WhatsApp. La aplicación funciona de forma local en su dispositivo y no requiere conexión a internet para su funcionamiento básico.</string>
+
+<string name="terms_section_3_title">3. Uso aceptable</string>
+<string name="terms_section_3_content">Usted se compromete a usar la aplicación únicamente para fines legales y éticos. No debe usar la aplicación para:\n• Violar derechos de autor o propiedad intelectual\n• Compartir contenido ilegal o inapropiado\n• Dañar o interferir con el funcionamiento de otros dispositivos\n• Usar la aplicación de manera que pueda dañar a otros usuarios</string>
+
+<string name="terms_section_4_title">4. Propiedad intelectual</string>
+<string name="terms_section_4_content">GuardaEstados y su contenido original son propiedad de sus desarrolladores. Los estados de WhatsApp que usted visualiza, guarda o comparte siguen siendo propiedad de sus respectivos creadores. La aplicación no reclama propiedad sobre el contenido de terceros.</string>
+
+<string name="terms_section_5_title">5. Limitación de responsabilidad</string>
+<string name="terms_section_5_content">La aplicación se proporciona \"tal como está\" sin garantías de ningún tipo. No somos responsables por:\n• Pérdida de datos o archivos\n• Daños al dispositivo\n• Uso indebido del contenido compartido\n• Problemas de compatibilidad con WhatsApp</string>
+
+<string name="terms_section_6_title">6. Terminación</string>
+<string name="terms_section_6_content">Podemos terminar o suspender su acceso a la aplicación en cualquier momento, sin previo aviso, por cualquier motivo, incluyendo el incumplimiento de estos términos de servicio.</string>
+
+<string name="terms_section_7_title">7. Ley aplicable</string>
+<string name="terms_section_7_content">Estos términos se rigen por las leyes de Guatemala. Cualquier disputa será resuelta en los tribunales competentes de Guatemala.</string>
+    <string name="permission_storage_required">Permiso de almacenamiento requerido</string>
+    <string name="permission_storage_explanation">Para mostrar los estados de WhatsApp, la app necesita acceso al almacenamiento. Por favor, concede el permiso.</string>
+    <string name="permission_grant">Conceder permiso</string>
+    <string name="no_whatsapp_instances_found">No se detectaron cuentas de WhatsApp</string>
+</resources> 

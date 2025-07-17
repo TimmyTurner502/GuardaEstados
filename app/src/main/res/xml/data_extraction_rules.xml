@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+   Data extraction rules for GuardaEstados app.
+   This file controls what data is backed up to Google Drive and transferred between devices.
+-->
+<data-extraction-rules>
+    <cloud-backup>
+        <!-- Exclude sensitive data from cloud backup -->
+        <exclude domain="sharedpref" path="guardaestados_prefs.xml"/>
+        <exclude domain="file" path="StatusWtsUp/"/>
+        <exclude domain="file" path="WhatsApp/"/>
+        <exclude domain="file" path="WhatsApp Business/"/>
+    </cloud-backup>
+    <device-transfer>
+        <!-- Exclude sensitive data from device transfer -->
+        <exclude domain="sharedpref" path="guardaestados_prefs.xml"/>
+        <exclude domain="file" path="StatusWtsUp/"/>
+        <exclude domain="file" path="WhatsApp/"/>
+        <exclude domain="file" path="WhatsApp Business/"/>
+    </device-transfer>
+</data-extraction-rules>
