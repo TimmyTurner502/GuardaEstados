@@ -9,33 +9,57 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
+import com.sjocol.guardaestados.AppPalette
+import androidx.compose.ui.graphics.Color
 
 @Composable
 fun GuardaEstadosTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    palette: AppPalette = AppPalette.DEFAULT,
     content: @Composable () -> Unit
 ) {
-    val colorScheme = if (darkTheme) {
-        darkColorScheme(
-            primary = DefaultPrimary,
-            secondary = DefaultSecondary,
-            background = DefaultBackground,
-            surface = DefaultSurface,
-            onPrimary = DefaultOnPrimary,
-            onSecondary = DefaultOnSecondary,
-            onBackground = DefaultOnBackground,
-            onSurface = DefaultOnSurface
+    val colorScheme = when (palette) {
+        AppPalette.DEFAULT -> if (isSystemInDarkTheme()) {
+            darkColorScheme(
+                primary = DefaultPrimary,
+                secondary = DefaultSecondary,
+                background = DefaultBackground,
+                surface = DefaultSurface,
+                onPrimary = DefaultOnPrimary,
+                onSecondary = DefaultOnSecondary,
+                onBackground = DefaultOnBackground,
+                onSurface = DefaultOnSurface
+            )
+        } else {
+            lightColorScheme(
+                primary = DefaultPrimary,
+                secondary = DefaultSecondary,
+                background = DefaultBackground,
+                surface = DefaultSurface,
+                onPrimary = DefaultOnPrimary,
+                onSecondary = DefaultOnSecondary,
+                onBackground = DefaultOnBackground,
+                onSurface = DefaultOnSurface
+            )
+        }
+        AppPalette.LIGHT -> lightColorScheme(
+            primary = Color(0xFF1976D2), // Azul
+            secondary = Color(0xFF90CAF9),
+            background = Color(0xFFFFFFFF),
+            surface = Color(0xFFF5F5F5),
+            onPrimary = Color.White,
+            onSecondary = Color.Black,
+            onBackground = Color(0xFF222222),
+            onSurface = Color(0xFF222222)
         )
-    } else {
-        lightColorScheme(
-            primary = DefaultPrimary,
-            secondary = DefaultSecondary,
-            background = DefaultBackground,
-            surface = DefaultSurface,
-            onPrimary = DefaultOnPrimary,
-            onSecondary = DefaultOnSecondary,
-            onBackground = DefaultOnBackground,
-            onSurface = DefaultOnSurface
+        AppPalette.DARK -> darkColorScheme(
+            primary = Color(0xFF222831), // Gris oscuro
+            secondary = Color(0xFF393E46),
+            background = Color(0xFF121212),
+            surface = Color(0xFF23272F),
+            onPrimary = Color.White,
+            onSecondary = Color.White,
+            onBackground = Color(0xFFE0E0E0),
+            onSurface = Color(0xFFE0E0E0)
         )
     }
     val view = LocalView.current
@@ -43,7 +67,8 @@ fun GuardaEstadosTheme(
         SideEffect {
             val window = (view.context as android.app.Activity).window
             window.statusBarColor = colorScheme.primary.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
+            // Usar fondo claro solo para la paleta LIGHT
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = palette == AppPalette.LIGHT
         }
     }
     MaterialTheme(

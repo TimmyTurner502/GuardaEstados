@@ -176,6 +176,9 @@ fun MensajeScreen() {
     // Diálogo para enviar mensaje
     if (showMessageDialog) {
         AlertDialog(
+            containerColor = MaterialTheme.colorScheme.surface,
+            titleContentColor = MaterialTheme.colorScheme.onSurface,
+            textContentColor = MaterialTheme.colorScheme.onSurface,
             onDismissRequest = { showMessageDialog = false },
             title = { Text("${selectedCountry.flag} ${selectedCountry.name}") },
             text = {

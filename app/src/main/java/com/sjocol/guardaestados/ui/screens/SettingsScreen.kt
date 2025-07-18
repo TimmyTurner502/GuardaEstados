@@ -39,6 +39,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import com.sjocol.guardaestados.AppState
+import com.sjocol.guardaestados.AppPalette
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -169,6 +170,43 @@ fun SettingsScreen(navController: NavController, appState: AppState) {
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
                 ) {
                     Text(appState.downloadFolder, color = MaterialTheme.colorScheme.onPrimary)
+                }
+                HorizontalDivider(modifier = Modifier.padding(vertical = 6.dp))
+            }
+            // Selector de paleta de colores
+            item {
+                Text(stringResource(R.string.color_palette), style = MaterialTheme.typography.titleMedium)
+                var expandedPaleta by remember { mutableStateOf(false) }
+                // Declarar la lista de paletas explícitamente:
+                val paletas: List<Pair<String, AppPalette>> = listOf(
+                    stringResource(R.string.palette_default) to AppPalette.DEFAULT,
+                    stringResource(R.string.palette_light) to AppPalette.LIGHT,
+                    stringResource(R.string.palette_dark) to AppPalette.DARK
+                )
+                val paletaActual = paletas.find { it.second == appState.palette }?.first ?: paletas[0].first
+                Box {
+                    Button(
+                        onClick = { expandedPaleta = true },
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+                    ) {
+                        Text(paletaActual, color = MaterialTheme.colorScheme.onPrimary)
+                    }
+                    DropdownMenu(
+                        expanded = expandedPaleta,
+                        onDismissRequest = { expandedPaleta = false },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        paletas.forEach { (nombre, tipo) ->
+                            DropdownMenuItem(
+                                text = { Text(nombre) },
+                                onClick = {
+                                    appState.palette = tipo
+                                    expandedPaleta = false
+                                }
+                            )
+                        }
+                    }
                 }
                 HorizontalDivider(modifier = Modifier.padding(vertical = 6.dp))
             }

@@ -8,6 +8,8 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.sjocol.guardaestados.ui.components.WhatsAppInstance
 
+enum class AppPalette { DEFAULT, LIGHT, DARK }
+
 class AppState(private val context: Context? = null) {
     var previewBarTranslucent by mutableStateOf(true)
     var idiomaKey by mutableStateOf(0) // NUEVO: key para recomposición global
@@ -16,11 +18,18 @@ class AppState(private val context: Context? = null) {
         set(value) {
             _locale = value
             saveLocale(value)
+            // Forzar cambio de idioma en recursos
+            context?.let {
+                val config = it.resources.configuration
+                config.setLocale(value)
+                it.resources.updateConfiguration(config, it.resources.displayMetrics)
+            }
             idiomaKey++ // Forzar recomposición global
         }
     private var _locale by mutableStateOf(loadLocale())
     var downloadFolder by mutableStateOf(loadDownloadFolder())
     var selectedInstance by mutableStateOf<WhatsAppInstance?>(loadSelectedInstance())
+    var palette by mutableStateOf(AppPalette.DEFAULT)
     
     // Lista de archivos bloqueados
     private var _lockedFiles by mutableStateOf(loadLockedFiles())

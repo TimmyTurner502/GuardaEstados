@@ -46,9 +46,10 @@
     <string name="tips_no_special_chars">• Do not include spaces or special characters</string>
     <string name="tips_auto_open">• The message will open in WhatsApp automatically</string>
     <string name="back">Back</string>
-    <string name="color_palette">Color palette:</string>
-    <string name="green">Green</string>
-    <string name="blue">Blue/Lilac/Beige</string>
+    <string name="color_palette">Color palette</string>
+    <string name="palette_default">Green (Default)</string>
+    <string name="palette_light">Light</string>
+    <string name="palette_dark">Dark</string>
     <string name="preview_bar">Preview action bar:</string>
     <string name="translucent">Translucent</string>
     <string name="solid">Solid</string>

@@ -417,14 +417,13 @@ fun GuardadosTab(appState: AppState, showDeleteAll: Boolean = false) {
     var isRefreshing by remember { mutableStateOf(false) }
     var showPermissionUI by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
-    var showRewardDialog by remember { mutableStateOf(false) }
-    var pendingAction by remember { mutableStateOf<String?>(null) }
     var showRewardedAd by remember { mutableStateOf(false) }
-    var showWhatsAppDialogSaved by remember { mutableStateOf(false) }
+    var pendingAction by remember { mutableStateOf<String?>(null) }
     var pendingRepostItemsSaved by remember { mutableStateOf<List<String>>(emptyList()) }
     var whatsAppPackagesSaved by remember { mutableStateOf(listOf<Pair<String, String>>()) }
     val snackbarHostState = remember { SnackbarHostState() }
     var snackbarMessage by remember { mutableStateOf<String?>(null) }
+    var showWhatsAppDialogSaved by remember { mutableStateOf(false) }
 
     // Función para cargar archivos guardados
     fun loadSavedFiles() {
@@ -535,7 +534,8 @@ fun GuardadosTab(appState: AppState, showDeleteAll: Boolean = false) {
                             IconButton(onClick = {
                                 pendingAction = "share"
                                 if (!appState.rewardedAdWatchedThisSession) {
-                                    showRewardDialog = true
+                                    showRewardedAd = true
+                                    pendingAction = "share"
                                 } else {
                                     FileActions.shareFiles(context, selectedSaved.map { it.id })
                                     showBatchActions = false
@@ -546,7 +546,8 @@ fun GuardadosTab(appState: AppState, showDeleteAll: Boolean = false) {
                             IconButton(onClick = {
                                 pendingAction = "download"
                                 if (!appState.rewardedAdWatchedThisSession) {
-                                    showRewardDialog = true
+                                    showRewardedAd = true
+                                    pendingAction = "download"
                                 } else {
                                     FileActions.downloadFiles(context, selectedSaved.map { it.id }, {
                                         Toast.makeText(context, "Archivos descargados", Toast.LENGTH_SHORT).show()
@@ -559,7 +560,8 @@ fun GuardadosTab(appState: AppState, showDeleteAll: Boolean = false) {
                             IconButton(onClick = {
                                 pendingAction = "repost"
                                 if (!appState.rewardedAdWatchedThisSession) {
-                                    showRewardDialog = true
+                                    showRewardedAd = true
+                                    pendingAction = "repost"
                                 } else {
                                     showWhatsAppDialogSaved = true
                                 }
@@ -606,67 +608,42 @@ fun GuardadosTab(appState: AppState, showDeleteAll: Boolean = false) {
                 }
                 
                 // Diálogo de confirmación para publicidad por recompensa
-                if (showRewardDialog && pendingAction != null) {
+                if (showRewardedAd && !appState.rewardedAdWatchedThisSession) {
                     AlertDialog(
-                        onDismissRequest = { showRewardDialog = false; pendingAction = null },
+                        onDismissRequest = { showRewardedAd = false; pendingAction = null },
                         title = { Text(stringResource(R.string.rewarded_ad_batch_title)) },
                         text = { Text(stringResource(R.string.rewarded_ad_batch_message)) },
                         confirmButton = {
                             TextButton(onClick = {
-                                showRewardDialog = false
-                                showRewardedAd = true
+                                appState.rewardedAdWatchedThisSession = true
+                                when (pendingAction) {
+                                    "share" -> {
+                                        FileActions.shareFiles(context, selectedSaved.map { it.id })
+                                        showBatchActions = false
+                                    }
+                                    "download" -> {
+                                        FileActions.downloadFiles(context, selectedSaved.map { it.id }, {
+                                            Toast.makeText(context, "Archivos descargados", Toast.LENGTH_SHORT).show()
+                                        }, appState.downloadFolder)
+                                        showBatchActions = false
+                                    }
+                                    "repost" -> {
+                                        showWhatsAppDialogSaved = true
+                                    }
+                                }
+                                pendingAction = null
+                                showRewardedAd = false
                             }) {
                                 Text(stringResource(R.string.accept))
                             }
                         },
                         dismissButton = {
                             TextButton(onClick = {
-                                showRewardDialog = false
+                                showRewardedAd = false
                                 pendingAction = null
                             }) {
                                 Text(stringResource(R.string.cancel))
                             }
-                        }
-                    )
-                }
-                
-                // Mostrar anuncio por recompensa
-                if (showRewardedAd) {
-                    ShowRewardedAd(
-                        context = context,
-                        onRewardEarned = {
-                            appState.rewardedAdWatchedThisSession = true
-                            when (pendingAction) {
-                                "share" -> {
-                                    FileActions.shareFiles(context, selectedSaved.map { it.id })
-                                    showBatchActions = false
-                                }
-                                "download" -> {
-                                    FileActions.downloadFiles(context, selectedSaved.map { it.id }, {
-                                        Toast.makeText(context, "Archivos descargados", Toast.LENGTH_SHORT).show()
-                                    }, appState.downloadFolder)
-                                    showBatchActions = false
-                                }
-                                "delete" -> {
-                                    val filesToDelete = selectedSaved.filter { !appState.isFileLocked(it.id) }
-                                    if (filesToDelete.isNotEmpty()) {
-                                        FileActions.deleteFiles(context, filesToDelete.map { it.id }) {
-                                            savedItems = savedItems.filter { it !in filesToDelete }
-                                            selectedSaved.clear()
-                                            showBatchActions = false
-                                            Toast.makeText(context, "Archivos eliminados", Toast.LENGTH_SHORT).show()
-                                        }
-                                    } else {
-                                        Toast.makeText(context, "No se pueden eliminar archivos bloqueados", Toast.LENGTH_SHORT).show()
-                                    }
-                                }
-                            }
-                            pendingAction = null
-                            showRewardedAd = false
-                        },
-                        onAdClosed = {
-                            showRewardedAd = false
-                            pendingAction = null
                         }
                     )
                 }
