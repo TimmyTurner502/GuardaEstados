@@ -92,6 +92,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import android.content.Intent
 import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
+import android.util.Log
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -209,11 +210,31 @@ fun EstadosTab(navController: NavController, appState: AppState) {
     val selectedInstance = appState.selectedInstance
     // Buscar solo en la instancia seleccionada
     suspend fun loadStatusFilesForSelected() {
-        val files = selectedInstance?.let { FileUtils.getStatusFilesForInstanceDeep(it.path) } ?: emptyList()
-        statusItems = files.map {
-            if (it.name.endsWith(".mp4")) GalleryItem.Video(it.absolutePath)
-            else GalleryItem.Image(it.absolutePath)
+        Log.d("EstadosTab", "=== CARGANDO ESTADOS ===")
+        Log.d("EstadosTab", "Instancia seleccionada: ${selectedInstance?.name}")
+        Log.d("EstadosTab", "Ruta de instancia: ${selectedInstance?.path}")
+        
+        val files = selectedInstance?.let { 
+            Log.d("EstadosTab", "Llamando a getStatusFilesForInstanceDeep con: ${it.path}")
+            FileUtils.getStatusFilesForInstanceDeep(it.path) 
+        } ?: emptyList()
+        
+        Log.d("EstadosTab", "Archivos encontrados: ${files.size}")
+        files.forEach { file ->
+            Log.d("EstadosTab", "Archivo: ${file.name} (${file.length()} bytes)")
         }
+        
+        statusItems = files.map {
+            if (it.name.lowercase().endsWith(".mp4")) {
+                Log.d("EstadosTab", "Creando GalleryItem.Video: ${it.absolutePath}")
+                GalleryItem.Video(it.absolutePath)
+            } else {
+                Log.d("EstadosTab", "Creando GalleryItem.Image: ${it.absolutePath}")
+                GalleryItem.Image(it.absolutePath)
+            }
+        }
+        
+        Log.d("EstadosTab", "GalleryItems creados: ${statusItems.size}")
     }
     LaunchedEffect(selectedInstance) {
         isLoading = true

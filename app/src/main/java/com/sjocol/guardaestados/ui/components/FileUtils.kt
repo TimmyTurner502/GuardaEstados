@@ -53,16 +53,55 @@ object FileUtils {
 
     /**
      * Lista todos los archivos de imagen y video en la carpeta dada.
+     * VERSIÓN ROBUSTA Y DEPURABLE
      */
     fun listMediaFilesInFolder(path: String): List<File> {
         val dir = File(path)
-        val files = if (dir.exists() && dir.isDirectory) {
-            dir.listFiles()?.filter {
-                it.isFile && (it.name.endsWith(".jpg", true) || it.name.endsWith(".jpeg", true) || it.name.endsWith(".png", true) || it.name.endsWith(".mp4", true))
-            }?.sortedByDescending { it.lastModified() } ?: emptyList()
-        } else emptyList()
-        Log.d("FileUtils", "Archivos encontrados en $path: ${files.map { it.name }}")
-        return files
+        Log.d("FileUtils", "=== DEPURACIÓN: Buscando en $path ===")
+        Log.d("FileUtils", "Carpeta existe: ${dir.exists()}")
+        Log.d("FileUtils", "Es directorio: ${dir.isDirectory}")
+        
+        if (!dir.exists()) {
+            Log.e("FileUtils", "ERROR: La carpeta NO existe: $path")
+            return emptyList()
+        }
+        
+        if (!dir.isDirectory()) {
+            Log.e("FileUtils", "ERROR: No es un directorio: $path")
+            return emptyList()
+        }
+        
+        val allFiles = dir.listFiles()
+        Log.d("FileUtils", "Total de archivos en carpeta: ${allFiles?.size ?: 0}")
+        
+        if (allFiles == null) {
+            Log.e("FileUtils", "ERROR: No se puede listar archivos en: $path")
+            return emptyList()
+        }
+        
+        // Mostrar TODOS los archivos encontrados
+        allFiles.forEach { file ->
+            Log.d("FileUtils", "Archivo encontrado: ${file.name} (${file.length()} bytes)")
+        }
+        
+        // Filtrar solo archivos de imagen y video
+        val mediaFiles = allFiles.filter {
+            it.isFile && (
+                it.name.lowercase().endsWith(".jpg") || 
+                it.name.lowercase().endsWith(".jpeg") || 
+                it.name.lowercase().endsWith(".png") || 
+                it.name.lowercase().endsWith(".mp4") ||
+                it.name.lowercase().endsWith(".mov") ||
+                it.name.lowercase().endsWith(".avi")
+            )
+        }.sortedByDescending { it.lastModified() }
+        
+        Log.d("FileUtils", "Archivos de media encontrados: ${mediaFiles.size}")
+        mediaFiles.forEach { file ->
+            Log.d("FileUtils", "Media file: ${file.name} (${file.length()} bytes, modificado: ${file.lastModified()})")
+        }
+        
+        return mediaFiles
     }
 
     fun getStatusFilesForInstanceDeep(instancePath: String): List<File> {
@@ -148,43 +187,7 @@ object FileUtils {
         }
     }
 
-    // NUEVO: Búsqueda profunda y automática de la carpeta .Statuses para cada instancia
-    fun findStatusesRecursively(baseDir: File): File? {
-        if (!baseDir.exists() || !baseDir.isDirectory) return null
-        if (baseDir.name == ".Statuses") return baseDir
-        baseDir.listFiles()?.forEach { file ->
-            if (file.isDirectory) {
-                val found = findStatusesRecursively(file)
-                if (found != null) return found
-            }
-        }
-        return null
-    }
-
-    // Eliminar la función duplicada de getStatusFilesForInstanceDeep que está más abajo en el archivo (línea 164 aprox.)
-
-    // NUEVO: Búsqueda profunda global de la carpeta .Statuses en todo el almacenamiento externo
-    fun findStatusesGlobally(): File? {
-        val roots = listOf(
-            Environment.getExternalStorageDirectory(),
-            File("/storage/emulated/0/"),
-            File("/sdcard/"),
-            File("/storage/"),
-        )
-        for (root in roots) {
-            val found = findStatusesRecursively(root)
-            if (found != null && found.exists() && found.isDirectory) {
-                val files = found.listFiles()?.filter { it.isFile && (it.name.endsWith(".jpg") || it.name.endsWith(".mp4")) }
-                if (!files.isNullOrEmpty()) return found
-            }
-        }
-        return null
-    }
-
-    fun getStatusFilesGlobal(): List<File> {
-        val statusesDir = findStatusesGlobally()
-        return if (statusesDir != null && statusesDir.exists() && statusesDir.isDirectory) {
-            statusesDir.listFiles()?.filter { it.isFile && (it.name.endsWith(".jpg") || it.name.endsWith(".mp4")) }?.sortedByDescending { it.lastModified() } ?: emptyList()
-        } else emptyList()
-    }
+    // FUNCIONES ELIMINADAS: Las funciones findStatusesRecursively, findStatusesGlobally y getStatusFilesGlobal
+    // fueron eliminadas porque causaban bucles infinitos y colgaban la aplicación.
+    // En su lugar, se usa getStatusFilesForInstanceDeep que es más segura y eficiente.
 } 
