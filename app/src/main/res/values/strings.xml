@@ -130,6 +130,7 @@
     <string name="terms_of_service_title">Términos de Servicio</string>
     <string name="accept_terms">Aceptar</string>
     <string name="legal_documents">Documentos Legales</string>
+    <string name="legal_info">Información Legal</string>
     
     <!-- Secciones de términos de servicio -->
     <string name="terms_section_1_title">1. Aceptación de términos</string>

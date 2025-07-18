@@ -68,7 +68,7 @@ class MainActivity : ComponentActivity() {
 
             // Usar idiomaKey como key para forzar reinicialización global
             androidx.compose.runtime.key(appState.idiomaKey) {
-                GuardaEstadosTheme(themeType = appState.themeType, themeMode = appState.themeMode) {
+                GuardaEstadosTheme {
                     Surface(color = MaterialTheme.colorScheme.background) {
                         val navController = rememberNavController()
                         AppNavGraph(

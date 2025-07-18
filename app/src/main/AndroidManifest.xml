@@ -11,8 +11,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.GuardaEstados"
-        android:requestLegacyExternalStorage="false"
-        android:preserveLegacyExternalStorage="false"
+        android:requestLegacyExternalStorage="true"
+        android:preserveLegacyExternalStorage="true"
         tools:targetApi="31">
 
         <!-- App ID de AdMob - ID DE PRUEBA DE GOOGLE -->
@@ -44,7 +44,17 @@
         </activity>
     </application>
 
+    <!-- Permisos para Android < 11 -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    
+    <!-- Permisos para Android 11+ -->
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" 
+        tools:ignore="ScopedStorage" />
     <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" />
+    
+    <!-- Permisos adicionales para acceso a archivos -->
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
 
 </manifest>

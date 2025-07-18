@@ -3,16 +3,12 @@ package com.sjocol.guardaestados
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import com.sjocol.guardaestados.ui.theme.ThemeType
-import com.sjocol.guardaestados.ui.theme.ThemeMode
 import java.util.Locale
 import android.content.Context
 import android.content.SharedPreferences
 import com.sjocol.guardaestados.ui.components.WhatsAppInstance
 
 class AppState(private val context: Context? = null) {
-    var themeType by mutableStateOf(loadThemeType())
-    var themeMode by mutableStateOf(loadThemeMode())
     var previewBarTranslucent by mutableStateOf(true)
     var idiomaKey by mutableStateOf(0) // NUEVO: key para recomposición global
     var locale: Locale
@@ -52,25 +48,20 @@ class AppState(private val context: Context? = null) {
         downloadFolder = path
         prefs()?.edit()?.putString("download_folder", path)?.apply()
     }
-    fun updateThemeMode(mode: ThemeMode) {
-        themeMode = mode
-        prefs()?.edit()?.putString("theme_mode", mode.name)?.apply()
-    }
+    
     fun updateSelectedInstance(instance: WhatsAppInstance?) {
         selectedInstance = instance
         prefs()?.edit()?.putString("selected_instance_name", instance?.name)
             ?.putString("selected_instance_path", instance?.path)
             ?.apply()
     }
-    fun updateThemeType(type: ThemeType) {
-        themeType = type
-        prefs()?.edit()?.putString("theme_type", type.name)?.apply()
-    }
+    
     fun resetLocaleToSystem() {
         _locale = Locale.getDefault()
         prefs()?.edit()?.remove("locale_lang")?.remove("locale_country")?.apply()
         idiomaKey++
     }
+    
     private fun prefs(): SharedPreferences? = context?.getSharedPreferences("guardaestados_prefs", Context.MODE_PRIVATE)
     private fun saveLocale(locale: Locale) {
         prefs()?.edit()?.putString("locale_lang", locale.language)?.putString("locale_country", locale.country)?.apply()
@@ -89,19 +80,9 @@ class AppState(private val context: Context? = null) {
         val path = prefs()?.getString("selected_instance_path", null)
         return if (name != null && path != null) WhatsAppInstance(name, path) else null
     }
-    private fun loadThemeMode(): ThemeMode {
-        val value = prefs()?.getString("theme_mode", null)
-        return value?.let { runCatching { ThemeMode.valueOf(it) }.getOrNull() } ?: ThemeMode.SYSTEM
-    }
-    private fun loadThemeType(): ThemeType {
-        val value = prefs()?.getString("theme_type", null)
-        return value?.let { runCatching { ThemeType.valueOf(it) }.getOrNull() } ?: ThemeType.DEFAULT
-    }
-    
     private fun loadLockedFiles(): Set<String> {
         return prefs()?.getStringSet("locked_files", emptySet()) ?: emptySet()
     }
-    
     private fun saveLockedFiles(files: Set<String>) {
         prefs()?.edit()?.putStringSet("locked_files", files)?.apply()
     }

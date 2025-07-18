@@ -205,114 +205,200 @@ fun HomeScreen(navController: NavController, appState: AppState) {
 @Composable
 fun EstadosTab(navController: NavController, appState: AppState) {
     val context = LocalContext.current
+    val activity = context as? android.app.Activity
     val scope = rememberCoroutineScope()
     var isLoading by remember { mutableStateOf(true) }
     var statusItems by remember { mutableStateOf<List<GalleryItem>>(emptyList()) }
     var isRefreshing by remember { mutableStateOf(false) }
+    var showPermissionUI by remember { mutableStateOf(false) }
     val selectedInstance = appState.selectedInstance
-    // Buscar solo en la instancia seleccionada
+
+    // Detectar si hay permisos
+    fun hasAllFilesPermission(): Boolean = PermissionUtils.hasStoragePermission(activity!!)
+
+    // NUEVA IMPLEMENTACIÓN ROBUSTA CON DIAGNÓSTICO COMPLETO
     suspend fun loadStatusFilesForSelected() {
-        Log.d("EstadosTab", "=== CARGANDO ESTADOS ===")
+        Log.d("EstadosTab", "=== DIAGNÓSTICO COMPLETO DE ESTADOS ===")
         Log.d("EstadosTab", "Instancia seleccionada: ${selectedInstance?.name}")
         Log.d("EstadosTab", "Ruta de instancia: ${selectedInstance?.path}")
         
-        val files = selectedInstance?.let { 
-            Log.d("EstadosTab", "Llamando a getStatusFilesForInstanceDeep con: ${it.path}")
-            FileUtils.getStatusFilesForInstanceDeep(it.path) 
-        } ?: emptyList()
-        
-        Log.d("EstadosTab", "Archivos encontrados: ${files.size}")
-        files.forEach { file ->
-            Log.d("EstadosTab", "Archivo: ${file.name} (${file.length()} bytes)")
+        if (selectedInstance == null) {
+            Log.e("EstadosTab", "❌ No hay instancia seleccionada")
+            return
         }
         
-        statusItems = files.map {
-            if (it.name.lowercase().endsWith(".mp4")) {
-                Log.d("EstadosTab", "Creando GalleryItem.Video: ${it.absolutePath}")
-                GalleryItem.Video(it.absolutePath)
-            } else {
-                Log.d("EstadosTab", "Creando GalleryItem.Image: ${it.absolutePath}")
-                GalleryItem.Image(it.absolutePath)
+        // PASO 1: Verificar información de la carpeta
+        val folderInfo = FileUtils.getFolderInfo(selectedInstance.path)
+        Log.d("EstadosTab", "📁 Información de carpeta: $folderInfo")
+        
+        // PASO 2: Verificar permisos
+        val hasPermissions = FileUtils.checkStoragePermissions(context)
+        Log.d("EstadosTab", "🔐 Permisos de almacenamiento: $hasPermissions")
+        
+        // PASO 3: Obtener archivos con diagnóstico detallado
+        val files = FileUtils.getStatusFilesForInstanceDeep(selectedInstance.path)
+        
+        Log.d("EstadosTab", "📊 Resultado de búsqueda:")
+        Log.d("EstadosTab", "   - Archivos encontrados: ${files.size}")
+        
+        if (files.isNotEmpty()) {
+            Log.d("EstadosTab", "   - Archivos válidos:")
+            files.forEach { file ->
+                val isAccessible = FileUtils.isFileAccessible(file.absolutePath)
+                Log.d("EstadosTab", "     ✅ ${file.name} (${file.length()} bytes, accesible: $isAccessible)")
+            }
+        } else {
+            Log.w("EstadosTab", "   ⚠️ No se encontraron archivos válidos")
+            
+            // PASO 4: Búsqueda alternativa si no hay archivos
+            Log.d("EstadosTab", "🔍 Intentando búsqueda alternativa...")
+            val alternativeFiles = FileUtils.findFilesRecursively(selectedInstance.path, maxDepth = 2)
+            Log.d("EstadosTab", "   - Archivos alternativos encontrados: ${alternativeFiles.size}")
+            alternativeFiles.forEach { file ->
+                Log.d("EstadosTab", "     🔍 ${file.absolutePath}")
             }
         }
         
-        Log.d("EstadosTab", "GalleryItems creados: ${statusItems.size}")
+        // PASO 5: Crear GalleryItems
+        statusItems = files.map { file ->
+            if (file.name.lowercase().endsWith(".mp4")) {
+                Log.d("EstadosTab", "🎬 Creando GalleryItem.Video: ${file.absolutePath}")
+                GalleryItem.Video(file.absolutePath)
+            } else {
+                Log.d("EstadosTab", "🖼️ Creando GalleryItem.Image: ${file.absolutePath}")
+                GalleryItem.Image(file.absolutePath)
+            }
+        }
+        
+        Log.d("EstadosTab", "✅ GalleryItems creados: ${statusItems.size}")
+        
+        // PASO 6: Estadísticas finales
+        if (files.isNotEmpty()) {
+            val stats = FileUtils.getFileStats(files)
+            Log.d("EstadosTab", "📈 Estadísticas: $stats")
+        }
     }
+
+    // Verificar permisos cuando cambie la instancia seleccionada
     LaunchedEffect(selectedInstance) {
         isLoading = true
+        if (!hasAllFilesPermission()) {
+            showPermissionUI = true
+            isLoading = false
+            return@LaunchedEffect
+        }
         loadStatusFilesForSelected()
         isLoading = false
     }
+
     Box(Modifier.fillMaxSize()) {
-        Column(Modifier.fillMaxSize()) {
-            Box(modifier = Modifier.fillMaxSize()) {
-                if (isLoading) {
-                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        CircularProgressIndicator()
-                    }
-                } else if (selectedInstance == null) {
-                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Text(
-                            text = "Selecciona una cuenta de WhatsApp en configuración",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            textAlign = TextAlign.Center
+        if (showPermissionUI) {
+            Column(
+                Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_lock),
+                    contentDescription = "Permiso requerido",
+                    modifier = Modifier.size(72.dp),
+                    tint = MaterialTheme.colorScheme.primary
+                )
+                Spacer(Modifier.height(16.dp))
+                Text(
+                    "Para mostrar los estados de WhatsApp, otorga permiso de acceso a todos los archivos.",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    textAlign = TextAlign.Center
+                )
+                Spacer(Modifier.height(24.dp))
+                Button(
+                    onClick = {
+                        PermissionUtils.requestStoragePermission(activity!!)
+                    },
+                    modifier = Modifier.padding(horizontal = 32.dp).fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_lock_open),
+                        contentDescription = null,
+                        modifier = Modifier.size(24.dp)
+                    )
+                    Spacer(Modifier.width(8.dp))
+                    Text("Otorgar permiso de archivos")
+                }
+            }
+        } else {
+            Column(Modifier.fillMaxSize()) {
+                Box(modifier = Modifier.fillMaxSize()) {
+                    if (isLoading) {
+                        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                            CircularProgressIndicator()
+                        }
+                    } else if (selectedInstance == null) {
+                        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                            Text(
+                                text = "Selecciona una cuenta de WhatsApp en configuración",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                textAlign = TextAlign.Center
+                            )
+                        }
+                    } else if (statusItems.isEmpty()) {
+                        // Estado vacío con pull-to-refresh
+                        SwipeRefresh(
+                            state = rememberSwipeRefreshState(isRefreshing = isRefreshing),
+                            onRefresh = {
+                                isRefreshing = true
+                                scope.launch {
+                                    loadStatusFilesForSelected()
+                                    isRefreshing = false
+                                }
+                            }
+                        ) {
+                            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.ic_search),
+                                        contentDescription = "Sin estados",
+                                        modifier = Modifier.size(64.dp),
+                                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                    Spacer(modifier = Modifier.height(8.dp))
+                                    Text(
+                                        text = "No se encontraron estados en la instancia seleccionada",
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        textAlign = TextAlign.Center
+                                    )
+                                    Spacer(modifier = Modifier.height(4.dp))
+                                    Text(
+                                        text = "💡 Desliza hacia abajo para actualizar",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        textAlign = TextAlign.Center
+                                    )
+                                }
+                            }
+                        }
+                    } else {
+                        GalleryPreview(
+                            items = statusItems,
+                            onSelectionChange = {},
+                            scrollToIndex = 0,
+                            showSearchAndFilters = false,
+                            snackbarHostState = null,
+                            selectedItemsExternal = emptyList(),
+                            onRefresh = {
+                                isRefreshing = true
+                                scope.launch {
+                                    loadStatusFilesForSelected()
+                                    isRefreshing = false
+                                }
+                            },
+                            isRefreshing = isRefreshing
                         )
                     }
-                } else if (statusItems.isEmpty()) {
-                    // Estado vacío con pull-to-refresh
-                    SwipeRefresh(
-                        state = rememberSwipeRefreshState(isRefreshing = isRefreshing),
-                        onRefresh = {
-                            isRefreshing = true
-                            scope.launch {
-                                loadStatusFilesForSelected()
-                                isRefreshing = false
-                            }
-                        }
-                    ) {
-                        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.ic_search),
-                                    contentDescription = "Sin estados",
-                                    modifier = Modifier.size(64.dp),
-                                    tint = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                                Spacer(modifier = Modifier.height(8.dp))
-                                Text(
-                                    text = "No se encontraron estados en la instancia seleccionada",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    textAlign = TextAlign.Center
-                                )
-                                Spacer(modifier = Modifier.height(4.dp))
-                                Text(
-                                    text = "💡 Desliza hacia abajo para actualizar",
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    textAlign = TextAlign.Center
-                                )
-                            }
-                        }
-                    }
-                } else {
-                    GalleryPreview(
-                        items = statusItems,
-                        onSelectionChange = {},
-                        scrollToIndex = 0,
-                        showSearchAndFilters = false,
-                        snackbarHostState = null,
-                        selectedItemsExternal = emptyList(),
-                        onRefresh = {
-                            isRefreshing = true
-                            scope.launch {
-                                loadStatusFilesForSelected()
-                                isRefreshing = false
-                            }
-                        },
-                        isRefreshing = isRefreshing
-                    )
                 }
             }
         }
@@ -322,12 +408,14 @@ fun EstadosTab(navController: NavController, appState: AppState) {
 @Composable
 fun GuardadosTab(appState: AppState, showDeleteAll: Boolean = false) {
     val context = LocalContext.current
+    val activity = context as? android.app.Activity
     var savedItems by remember { mutableStateOf<List<GalleryItem>>(emptyList()) }
     var selectedSaved = remember { mutableStateListOf<GalleryItem>() }
     var lastSavedIndex by remember { mutableStateOf(0) }
     var showConfirmDialog by remember { mutableStateOf(false) }
     var showBatchActions by remember { mutableStateOf(false) }
     var isRefreshing by remember { mutableStateOf(false) }
+    var showPermissionUI by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
     var showRewardDialog by remember { mutableStateOf(false) }
     var pendingAction by remember { mutableStateOf<String?>(null) }
@@ -356,277 +444,327 @@ fun GuardadosTab(appState: AppState, showDeleteAll: Boolean = false) {
         }
     }
 
+    // Detectar si hay permisos
+    fun hasAllFilesPermission(): Boolean = PermissionUtils.hasStoragePermission(activity!!)
+
+    // Reintentar carga al volver de la pantalla de permisos
+    LaunchedEffect(Unit) {
+    if (!hasAllFilesPermission()) {
+        showPermissionUI = true
+        return@LaunchedEffect
+    }
+    loadSavedFiles()
+    }
+
     Box(Modifier.fillMaxSize()) {
-        Column(Modifier.fillMaxSize()) {
-            // Barra de herramientas
-            Row(
-                Modifier.fillMaxWidth().padding(8.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+        if (showPermissionUI) {
+            Column(
+                Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                if (showDeleteAll && savedItems.isNotEmpty()) {
-                    Button(
-                        onClick = { showConfirmDialog = true },
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFD32F2F)),
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        Icon(Icons.Filled.Delete, contentDescription = null)
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(stringResource(R.string.delete_all_saved))
-                    }
-                }
-                // Eliminar todos los IconButton a la derecha
-            }
-
-            // Barra contextual compacta
-            if (selectedSaved.isNotEmpty()) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(48.dp)
-                        .background(MaterialTheme.colorScheme.secondaryContainer)
-                        .padding(horizontal = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_lock),
+                    contentDescription = "Permiso requerido",
+                    modifier = Modifier.size(72.dp),
+                    tint = MaterialTheme.colorScheme.primary
+                )
+                Spacer(Modifier.height(16.dp))
+                Text(
+                    "Para mostrar los archivos guardados, otorga permiso de acceso a todos los archivos.",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    textAlign = TextAlign.Center
+                )
+                Spacer(Modifier.height(24.dp))
+                Button(
+                    onClick = {
+                        PermissionUtils.requestStoragePermission(activity!!)
+                    },
+                    modifier = Modifier.padding(horizontal = 32.dp).fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
                 ) {
-                    Text(
-                        text = "Seleccionados: ${selectedSaved.size}",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_lock_open),
+                        contentDescription = null,
+                        modifier = Modifier.size(24.dp)
                     )
-                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                        IconButton(onClick = {
-                            pendingAction = "share"
-                            if (!appState.rewardedAdWatchedThisSession) {
-                                showRewardDialog = true
-                            } else {
-                                FileActions.shareFiles(context, selectedSaved.map { it.id })
-                                showBatchActions = false
-                            }
-                        }) {
-                            Icon(painter = painterResource(id = R.drawable.ic_share), contentDescription = "Compartir")
+                    Spacer(Modifier.width(8.dp))
+                    Text("Otorgar permiso de archivos")
+                }
+            }
+        } else {
+            Column(Modifier.fillMaxSize()) {
+                // Barra de herramientas
+                Row(
+                    Modifier.fillMaxWidth().padding(8.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    if (showDeleteAll && savedItems.isNotEmpty()) {
+                        Button(
+                            onClick = { showConfirmDialog = true },
+                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFD32F2F)),
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Icon(Icons.Filled.Delete, contentDescription = null)
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(stringResource(R.string.delete_all_saved))
                         }
-                        IconButton(onClick = {
-                            pendingAction = "download"
-                            if (!appState.rewardedAdWatchedThisSession) {
-                                showRewardDialog = true
-                            } else {
-                                FileActions.downloadFiles(context, selectedSaved.map { it.id }, {
-                                    Toast.makeText(context, "Archivos descargados", Toast.LENGTH_SHORT).show()
-                                }, appState.downloadFolder)
-                                showBatchActions = false
+                    }
+                    // Eliminar todos los IconButton a la derecha
+                }
+
+                // Barra contextual compacta
+                if (selectedSaved.isNotEmpty()) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(48.dp)
+                            .background(MaterialTheme.colorScheme.secondaryContainer)
+                            .padding(horizontal = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(
+                            text = "Seleccionados: ${selectedSaved.size}",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
+                        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                            IconButton(onClick = {
+                                pendingAction = "share"
+                                if (!appState.rewardedAdWatchedThisSession) {
+                                    showRewardDialog = true
+                                } else {
+                                    FileActions.shareFiles(context, selectedSaved.map { it.id })
+                                    showBatchActions = false
+                                }
+                            }) {
+                                Icon(painter = painterResource(id = R.drawable.ic_share), contentDescription = "Compartir")
                             }
-                        }) {
-                            Icon(painter = painterResource(id = R.drawable.ic_download), contentDescription = "Descargar")
-                        }
-                        IconButton(onClick = {
-                            pendingAction = "repost"
-                            if (!appState.rewardedAdWatchedThisSession) {
-                                showRewardDialog = true
-                            } else {
-                                showWhatsAppDialogSaved = true
+                            IconButton(onClick = {
+                                pendingAction = "download"
+                                if (!appState.rewardedAdWatchedThisSession) {
+                                    showRewardDialog = true
+                                } else {
+                                    FileActions.downloadFiles(context, selectedSaved.map { it.id }, {
+                                        Toast.makeText(context, "Archivos descargados", Toast.LENGTH_SHORT).show()
+                                    }, appState.downloadFolder)
+                                    showBatchActions = false
+                                }
+                            }) {
+                                Icon(painter = painterResource(id = R.drawable.ic_download), contentDescription = "Descargar")
                             }
-                        }) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.ic_repost_circle),
-                                contentDescription = "Repostear",
-                                modifier = Modifier.graphicsLayer(rotationZ = 90f).size(24.dp)
-                            )
+                            IconButton(onClick = {
+                                pendingAction = "repost"
+                                if (!appState.rewardedAdWatchedThisSession) {
+                                    showRewardDialog = true
+                                } else {
+                                    showWhatsAppDialogSaved = true
+                                }
+                            }) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.ic_repost_circle),
+                                    contentDescription = "Repostear",
+                                    modifier = Modifier.graphicsLayer(rotationZ = 90f).size(24.dp)
+                                )
+                            }
                         }
                     }
                 }
-            }
 
-            if (showConfirmDialog) {
-                AlertDialog(
-                    onDismissRequest = { showConfirmDialog = false },
-                    title = { Text(stringResource(R.string.delete_all_confirm_title)) },
-                    text = { Text(stringResource(R.string.delete_all_confirm_text)) },
-                    confirmButton = {
-                        TextButton(onClick = {
-                            // Filtrar archivos bloqueados antes de eliminar todos
-                            val filesToDelete = savedItems.filter { !appState.isFileLocked(it.id) }
-                            if (filesToDelete.isNotEmpty()) {
-                                FileActions.deleteFiles(context, filesToDelete.map { it.id }) {
-                                    savedItems = savedItems.filter { it !in filesToDelete }
-                                    showConfirmDialog = false
-                                    Toast.makeText(context, "Archivos eliminados", Toast.LENGTH_SHORT).show()
-                                }
-                            } else {
-                                Toast.makeText(context, "No hay archivos para eliminar", Toast.LENGTH_SHORT).show()
-                                showConfirmDialog = false
-                            }
-                        }) {
-                            Text(stringResource(R.string.delete), color = Color.Red)
-                        }
-                    },
-                    dismissButton = {
-                        TextButton(onClick = { showConfirmDialog = false }) {
-                            Text(stringResource(R.string.cancel))
-                        }
-                    }
-                )
-            }
-            
-            // Diálogo de confirmación para publicidad por recompensa
-            if (showRewardDialog && pendingAction != null) {
-                AlertDialog(
-                    onDismissRequest = { showRewardDialog = false; pendingAction = null },
-                    title = { Text(stringResource(R.string.rewarded_ad_batch_title)) },
-                    text = { Text(stringResource(R.string.rewarded_ad_batch_message)) },
-                    confirmButton = {
-                        TextButton(onClick = {
-                            showRewardDialog = false
-                            showRewardedAd = true
-                        }) {
-                            Text(stringResource(R.string.accept))
-                        }
-                    },
-                    dismissButton = {
-                        TextButton(onClick = {
-                            showRewardDialog = false
-                            pendingAction = null
-                        }) {
-                            Text(stringResource(R.string.cancel))
-                        }
-                    }
-                )
-            }
-            
-            // Mostrar anuncio por recompensa
-            if (showRewardedAd) {
-                ShowRewardedAd(
-                    context = context,
-                    onRewardEarned = {
-                        appState.rewardedAdWatchedThisSession = true
-                        when (pendingAction) {
-                            "share" -> {
-                                FileActions.shareFiles(context, selectedSaved.map { it.id })
-                                showBatchActions = false
-                            }
-                            "download" -> {
-                                FileActions.downloadFiles(context, selectedSaved.map { it.id }, {
-                                    Toast.makeText(context, "Archivos descargados", Toast.LENGTH_SHORT).show()
-                                }, appState.downloadFolder)
-                                showBatchActions = false
-                            }
-                            "delete" -> {
-                                val filesToDelete = selectedSaved.filter { !appState.isFileLocked(it.id) }
+                if (showConfirmDialog) {
+                    AlertDialog(
+                        onDismissRequest = { showConfirmDialog = false },
+                        title = { Text(stringResource(R.string.delete_all_confirm_title)) },
+                        text = { Text(stringResource(R.string.delete_all_confirm_text)) },
+                        confirmButton = {
+                            TextButton(onClick = {
+                                // Filtrar archivos bloqueados antes de eliminar todos
+                                val filesToDelete = savedItems.filter { !appState.isFileLocked(it.id) }
                                 if (filesToDelete.isNotEmpty()) {
                                     FileActions.deleteFiles(context, filesToDelete.map { it.id }) {
                                         savedItems = savedItems.filter { it !in filesToDelete }
-                                        selectedSaved.clear()
-                                        showBatchActions = false
+                                        showConfirmDialog = false
                                         Toast.makeText(context, "Archivos eliminados", Toast.LENGTH_SHORT).show()
                                     }
                                 } else {
-                                    Toast.makeText(context, "No se pueden eliminar archivos bloqueados", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(context, "No hay archivos para eliminar", Toast.LENGTH_SHORT).show()
+                                    showConfirmDialog = false
                                 }
+                            }) {
+                                Text(stringResource(R.string.delete), color = Color.Red)
+                            }
+                        },
+                        dismissButton = {
+                            TextButton(onClick = { showConfirmDialog = false }) {
+                                Text(stringResource(R.string.cancel))
                             }
                         }
-                        pendingAction = null
-                        showRewardedAd = false
-                    },
-                    onAdClosed = {
-                        showRewardedAd = false
-                        pendingAction = null
-                    }
-                )
-            }
-            
-            // Diálogo de selección de WhatsApp para repostear en guardados
-            if (showWhatsAppDialogSaved && pendingRepostItemsSaved.isNotEmpty()) {
-                AlertDialog(
-                    onDismissRequest = { showWhatsAppDialogSaved = false; pendingRepostItemsSaved = emptyList() },
-                    title = {
-                        Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                            Text("Selecciona WhatsApp para repostear", style = MaterialTheme.typography.titleLarge)
-                        }
-                    },
-                    text = {
-                        Column(Modifier.fillMaxWidth()) {
-                            whatsAppPackagesSaved.forEach { (pkg, label) ->
-                                val iconRes = when {
-                                    pkg.contains("w4b") -> R.drawable.ic_whatsapp_business
-                                    pkg.contains("business") -> R.drawable.ic_whatsapp_business
-                                    pkg.contains("clone") -> R.drawable.ic_whatsapp_dual
-                                    else -> R.drawable.ic_whatsapp
-                                }
-                                Button(
-                                    onClick = {
-                                        pendingRepostItemsSaved.forEach { fileId ->
-                                            FileActions.repostFile(context, fileId, pkg)
-                                        }
-                                        showWhatsAppDialogSaved = false
-                                        pendingRepostItemsSaved = emptyList()
-                                        showBatchActions = false
-                                    },
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(vertical = 6.dp),
-                                    contentPadding = PaddingValues(12.dp)
-                                ) {
-                                    Icon(
-                                        painter = painterResource(id = iconRes),
-                                        contentDescription = label,
-                                        modifier = Modifier.size(28.dp).padding(end = 8.dp)
-                                    )
-                                    Text(label, fontSize = 18.sp)
-                                }
-                            }
-                        }
-                    },
-                    confirmButton = {},
-                    dismissButton = {
-                        TextButton(onClick = { showWhatsAppDialogSaved = false; pendingRepostItemsSaved = emptyList() }) {
-                            Text("Cancelar")
-                        }
-                    }
-                )
-            }
-            
-            if (savedItems.isEmpty()) {
-                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_search),
-                            contentDescription = "Sin archivos guardados",
-                            modifier = Modifier.size(64.dp),
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            text = stringResource(R.string.no_saved_files),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
+                    )
                 }
-            } else {
-                // Usar el nuevo flujo de vista previa integrado en GalleryPreview
-                GalleryPreview(
-                    items = savedItems,
-                    onSelectionChange = { selectedSaved.clear(); selectedSaved.addAll(it) },
-                    scrollToIndex = lastSavedIndex,
-                    showSearchAndFilters = false,
-                    showLockButton = true,
-                    appState = appState,
-                    snackbarHostState = snackbarHostState,
-                    onRefresh = {
-                        isRefreshing = true
-                        scope.launch {
-                            loadSavedFiles()
-                            isRefreshing = false
+                
+                // Diálogo de confirmación para publicidad por recompensa
+                if (showRewardDialog && pendingAction != null) {
+                    AlertDialog(
+                        onDismissRequest = { showRewardDialog = false; pendingAction = null },
+                        title = { Text(stringResource(R.string.rewarded_ad_batch_title)) },
+                        text = { Text(stringResource(R.string.rewarded_ad_batch_message)) },
+                        confirmButton = {
+                            TextButton(onClick = {
+                                showRewardDialog = false
+                                showRewardedAd = true
+                            }) {
+                                Text(stringResource(R.string.accept))
+                            }
+                        },
+                        dismissButton = {
+                            TextButton(onClick = {
+                                showRewardDialog = false
+                                pendingAction = null
+                            }) {
+                                Text(stringResource(R.string.cancel))
+                            }
                         }
-                    },
-                    isRefreshing = isRefreshing
-                )
-            }
-            // Mostrar el snackbar con efecto secundario
-            if (snackbarMessage != null) {
-                LaunchedEffect(snackbarMessage) {
-                    snackbarHostState.showSnackbar(snackbarMessage!!)
-                    snackbarMessage = null
+                    )
+                }
+                
+                // Mostrar anuncio por recompensa
+                if (showRewardedAd) {
+                    ShowRewardedAd(
+                        context = context,
+                        onRewardEarned = {
+                            appState.rewardedAdWatchedThisSession = true
+                            when (pendingAction) {
+                                "share" -> {
+                                    FileActions.shareFiles(context, selectedSaved.map { it.id })
+                                    showBatchActions = false
+                                }
+                                "download" -> {
+                                    FileActions.downloadFiles(context, selectedSaved.map { it.id }, {
+                                        Toast.makeText(context, "Archivos descargados", Toast.LENGTH_SHORT).show()
+                                    }, appState.downloadFolder)
+                                    showBatchActions = false
+                                }
+                                "delete" -> {
+                                    val filesToDelete = selectedSaved.filter { !appState.isFileLocked(it.id) }
+                                    if (filesToDelete.isNotEmpty()) {
+                                        FileActions.deleteFiles(context, filesToDelete.map { it.id }) {
+                                            savedItems = savedItems.filter { it !in filesToDelete }
+                                            selectedSaved.clear()
+                                            showBatchActions = false
+                                            Toast.makeText(context, "Archivos eliminados", Toast.LENGTH_SHORT).show()
+                                        }
+                                    } else {
+                                        Toast.makeText(context, "No se pueden eliminar archivos bloqueados", Toast.LENGTH_SHORT).show()
+                                    }
+                                }
+                            }
+                            pendingAction = null
+                            showRewardedAd = false
+                        },
+                        onAdClosed = {
+                            showRewardedAd = false
+                            pendingAction = null
+                        }
+                    )
+                }
+                
+                // Diálogo de selección de WhatsApp para repostear en guardados
+                if (showWhatsAppDialogSaved && pendingRepostItemsSaved.isNotEmpty()) {
+                    AlertDialog(
+                        onDismissRequest = { showWhatsAppDialogSaved = false; pendingRepostItemsSaved = emptyList() },
+                        title = {
+                            Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                                Text("Selecciona WhatsApp para repostear", style = MaterialTheme.typography.titleLarge)
+                            }
+                        },
+                        text = {
+                            Column(Modifier.fillMaxWidth()) {
+                                whatsAppPackagesSaved.forEach { (pkg, label) ->
+                                    val iconRes = when {
+                                        pkg.contains("w4b") -> R.drawable.ic_whatsapp_business
+                                        pkg.contains("business") -> R.drawable.ic_whatsapp_business
+                                        pkg.contains("clone") -> R.drawable.ic_whatsapp_dual
+                                        else -> R.drawable.ic_whatsapp
+                                    }
+                                    Button(
+                                        onClick = {
+                                            pendingRepostItemsSaved.forEach { fileId ->
+                                                FileActions.repostFile(context, fileId, pkg)
+                                            }
+                                            showWhatsAppDialogSaved = false
+                                            pendingRepostItemsSaved = emptyList()
+                                            showBatchActions = false
+                                        },
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(vertical = 6.dp),
+                                        contentPadding = PaddingValues(12.dp)
+                                    ) {
+                                        Icon(
+                                            painter = painterResource(id = iconRes),
+                                            contentDescription = label,
+                                            modifier = Modifier.size(28.dp).padding(end = 8.dp)
+                                        )
+                                        Text(label, fontSize = 18.sp)
+                                    }
+                                }
+                            }
+                        },
+                        confirmButton = {},
+                        dismissButton = {
+                            TextButton(onClick = { showWhatsAppDialogSaved = false; pendingRepostItemsSaved = emptyList() }) {
+                                Text("Cancelar")
+                            }
+                        }
+                    )
+                }
+                
+                if (savedItems.isEmpty()) {
+                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_search),
+                                contentDescription = "Sin archivos guardados",
+                                modifier = Modifier.size(64.dp),
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text(
+                                text = stringResource(R.string.no_saved_files),
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+                } else {
+                    // Usar el nuevo flujo de vista previa integrado en GalleryPreview
+                    GalleryPreview(
+                        items = savedItems,
+                        onSelectionChange = { selectedSaved.clear(); selectedSaved.addAll(it) },
+                        scrollToIndex = lastSavedIndex,
+                        showSearchAndFilters = false,
+                        showLockButton = true,
+                        appState = appState,
+                        snackbarHostState = snackbarHostState,
+                        onRefresh = {
+                            isRefreshing = true
+                            scope.launch {
+                                loadSavedFiles()
+                                isRefreshing = false
+                            }
+                        },
+                        isRefreshing = isRefreshing
+                    )
+                }
+                // Mostrar el snackbar con efecto secundario
+                if (snackbarMessage != null) {
+                    LaunchedEffect(snackbarMessage) {
+                        snackbarHostState.showSnackbar(snackbarMessage!!)
+                        snackbarMessage = null
+                    }
                 }
             }
         }
